@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using PhoneBook.Hillgrove.Models;
 
 namespace PhoneBook.Hillgrove.Data;
@@ -17,25 +16,7 @@ internal class PhoneBookContext : DbContext
             .UseSqlite($"Data Source={dbPath}")
             .UseSeeding((context, _) => SeedData.Seed(context))
             .UseAsyncSeeding(
-                (context, _, CancellationToken) => SeedData.SeedAsync(context, CancellationToken)
-            )
-            // .EnableSensitiveDataLogging()
-            // .UseLoggerFactory(GetLoggerFactory())
-        ;
-    }
-
-    private ILoggerFactory? GetLoggerFactory()
-    {
-        var loggerFactory = LoggerFactory.Create(builder =>
-        {
-            builder.AddConsole();
-            builder.AddFilter(
-                (category, level) =>
-                    category == DbLoggerCategory.Database.Command.Name
-                    && level == LogLevel.Information
+                (context, _, cancellationToken) => SeedData.SeedAsync(context, cancellationToken)
             );
-        });
-
-        return loggerFactory;
     }
 }
